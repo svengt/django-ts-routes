@@ -1,6 +1,6 @@
 [project]
 name = "django-ts-routes"
-version = "0.1.0"
+version = "1.0.0"
 description = "Expose and perform reverse lookups of Django URLs in the TypeScript world."
 readme = "README.md"
 license = {text = "MIT"}
