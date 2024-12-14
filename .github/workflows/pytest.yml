@@ -1,0 +1,58 @@
+name: Pytest
+
+on: [push, pull_request]
+
+env:
+  UV_SYSTEM_PYTHON: 1
+
+jobs:
+  test:
+    name: Test on Python ${{ matrix.python-version }} and Django ${{ matrix.django-version }}
+    runs-on: ubuntu-latest
+    outputs:
+      failing-test: ${{ steps.test.outputs.fail }}
+    strategy:
+      matrix:
+        python-version: [
+          "3.8",
+          "3.9",
+          "3.10",
+          "3.11",
+          "3.12",
+          "3.13",
+        ]
+        django-version: [
+          "django>=4.2,<5.0",
+          "django>=5.0,<5.1",
+          "django>=5.1,<5.2",
+        ]
+        exclude:
+          - python-version: "3.8"
+            django-version: "django>=5.0,<5.1"
+          - python-version: "3.8"
+            django-version: "django>=5.1,<5.2"
+          - python-version: "3.9"
+            django-version: "django>=5.0,<5.1"
+          - python-version: "3.9"
+            django-version: "django>=5.1,<5.2"
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: '${{ matrix.python-version }}'
+
+    - name: Install the project
+      run: |
+        uv sync --all-extras --dev
+        uv add '${{ matrix.django-version }}; python_version == "${{ matrix.python-version }}"'
+
+    - name: Run tests
+      id: test
+      run: |
+        uv run pytest
