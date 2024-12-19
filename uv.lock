@@ -136,7 +136,7 @@ wheels = [
 
 [[package]]
 name = "django-ts-routes"
-version = "0.1.0.dev0"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "django" },
